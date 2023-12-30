@@ -1,11 +1,10 @@
-import Bird from "./modules/models/Bird";
+import Game from "./modules/models/Game";
+import addEvent from "./modules/utils/dom/addEvent";
 import preloadImages from "./modules/utils/canvas/preloadImages";
 import yellowBirdMidflap from "/sprites/yellowbird-midflap.png?url";
 import yellowBirdDownflap from "/sprites/yellowbird-downflap.png?url";
 import yellowBirdUpflap from "/sprites/yellowbird-upflap.png?url";
-import { MAX_TICK, MIDFLAP, UPFLAP } from "./constants";
 import "../css/style.css";
-import addEvent from "./modules/utils/dom/addEvent";
 
 async function init() {
   const canvas = document.getElementById("game") as HTMLCanvasElement;
@@ -19,31 +18,18 @@ async function init() {
     yellowBirdUpflap,
   ]);
 
-  const bird = new Bird(ctx, images);
-  let birdSprite = 0,
-    tick = 0;
-
-  function updateBirdSprite() {
-    if (tick === MAX_TICK) {
-      birdSprite++;
-      tick = 0;
-      if (birdSprite > UPFLAP) birdSprite = MIDFLAP;
-    }
-
-    tick++;
-  }
+  const game = new Game(ctx, images);
 
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    updateBirdSprite();
-    bird.update(birdSprite);
-
+    game.setBirdSprite();
+    game.update();
     requestAnimationFrame(animate);
   }
 
   animate();
 
-  addEvent("click", window, bird.jump.bind(bird));
+  addEvent("click", window, game.birdJump.bind(game));
 }
 
 init();

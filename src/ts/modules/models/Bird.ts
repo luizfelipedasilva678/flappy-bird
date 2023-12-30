@@ -19,7 +19,6 @@ export default class Bird {
   update(spritePos: number) {
     this.speed = this.speed + this.gravity;
     this.yPosition = this.yPosition + this.speed;
-
     this.draw(spritePos);
   }
 
