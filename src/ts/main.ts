@@ -4,6 +4,7 @@ import preloadImages from "./modules/utils/canvas/preloadImages";
 import yellowBirdMidflap from "/sprites/yellowbird-midflap.png?url";
 import yellowBirdDownflap from "/sprites/yellowbird-downflap.png?url";
 import yellowBirdUpflap from "/sprites/yellowbird-upflap.png?url";
+import backgroundDay from "/sprites/background-day.png?url";
 import "../css/style.css";
 
 async function init() {
@@ -16,12 +17,14 @@ async function init() {
     yellowBirdMidflap,
     yellowBirdDownflap,
     yellowBirdUpflap,
+    backgroundDay,
   ]);
 
   const game = new Game(ctx, images);
 
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    game.renderBackground();
     game.setBirdSprite();
     game.update();
     requestAnimationFrame(animate);

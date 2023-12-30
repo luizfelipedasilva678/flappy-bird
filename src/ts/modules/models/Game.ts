@@ -1,5 +1,5 @@
-import { MAX_TICK, MIDFLAP, UPFLAP } from "../../constants";
 import Bird from "./Bird";
+import { MAX_TICK, MIDFLAP, UPFLAP } from "../../constants";
 
 export default class Game {
   private ctx: CanvasRenderingContext2D;
@@ -16,6 +16,16 @@ export default class Game {
 
   update() {
     this.bird.update(this.birdSprite);
+  }
+
+  renderBackground() {
+    this.ctx.drawImage(
+      this.sprites[3],
+      0,
+      0,
+      window.innerWidth,
+      window.innerHeight
+    );
   }
 
   setBirdSprite() {
