@@ -5,6 +5,7 @@ import yellowBirdDownflap from "/sprites/yellowbird-downflap.png?url";
 import yellowBirdUpflap from "/sprites/yellowbird-upflap.png?url";
 import { MAX_TICK, MIDFLAP, UPFLAP } from "./constants";
 import "../css/style.css";
+import addEvent from "./modules/utils/dom/addEvent";
 
 async function init() {
   const canvas = document.getElementById("game") as HTMLCanvasElement;
@@ -41,6 +42,8 @@ async function init() {
   }
 
   animate();
+
+  addEvent("click", window, bird.jump.bind(bird));
 }
 
 init();
