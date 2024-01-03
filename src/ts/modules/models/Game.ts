@@ -1,42 +1,56 @@
 import Bird from "./Bird";
-import { MAX_TICK, MIDFLAP, UPFLAP } from "../../constants";
+import Pipe from "./Pipe";
 
 export default class Game {
-  private ctx: CanvasRenderingContext2D;
   private sprites: HTMLImageElement[] = [];
+  private width: number;
+  private height: number;
+  private frameCount = 0;
+  private pipes: Pipe[] = [];
   private bird: Bird;
-  private birdSprite = 0;
-  private frameInterval = 5;
+  private ctx: CanvasRenderingContext2D;
 
-  constructor(ctx: CanvasRenderingContext2D, sprites: HTMLImageElement[] = []) {
+  constructor(
+    ctx: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+    sprites: HTMLImageElement[] = []
+  ) {
     this.ctx = ctx;
+    this.width = width;
+    this.height = height;
     this.sprites = sprites;
     this.bird = new Bird(ctx, this.sprites.slice(0, 3));
-  }
-
-  update() {
-    this.bird.update(this.birdSprite);
-  }
-
-  renderBackground() {
-    this.ctx.drawImage(
-      this.sprites[3],
-      0,
-      0,
-      window.innerWidth,
-      window.innerHeight
+    this.pipes = Array.from(
+      { length: 2 },
+      (_, i) => new Pipe(ctx, this.sprites[4], i, this.width, this.height)
     );
   }
 
-  setBirdSprite() {
-    if (this.frameInterval === MAX_TICK) {
-      this.birdSprite++;
-      this.frameInterval = 0;
+  update() {
+    this.renderBackground();
+    this.pipes.forEach((pipe) => pipe.update());
+    this.bird.update();
+    this.frameCount++;
 
-      if (this.birdSprite > UPFLAP) this.birdSprite = MIDFLAP;
+    const offScreenPipeIdx = this.pipes.findIndex((pipe) => pipe.isOffScreen);
+
+    if (offScreenPipeIdx !== -1) {
+      this.pipes = [
+        ...this.pipes.slice(1),
+        new Pipe(
+          this.ctx,
+          this.sprites[4],
+          offScreenPipeIdx,
+          this.width,
+          this.height
+        ),
+      ];
     }
+  }
 
-    this.frameInterval++;
+  renderBackground() {
+    this.ctx.drawImage(this.sprites[3], 0, 0, this.width, this.height);
   }
 
   birdJump() {
