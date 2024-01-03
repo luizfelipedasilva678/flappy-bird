@@ -1,3 +1,5 @@
 # Flappy Bird
 
-Flappy Bird game made with HTML5 Canvas
+Flappy Bird clone made with HTML5 Canvas
+
+Status: under construction 🚧
