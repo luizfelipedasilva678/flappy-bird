@@ -45,4 +45,20 @@ export default class Bird {
   jump() {
     this.speed = -this.birdJump;
   }
+
+  get birdWidth() {
+    return this.sprites[0].width;
+  }
+
+  get birdHeight() {
+    return this.sprites[0].height;
+  }
+
+  get birdXPosition() {
+    return this.xPosition;
+  }
+
+  get birdYPosition() {
+    return this.yPosition;
+  }
 }

@@ -1,5 +1,6 @@
 import Bird from "./Bird";
 import Pipe from "./Pipe";
+import CollisionDetector from "./CollisionDetector";
 
 export default class Game {
   private sprites: HTMLImageElement[] = [];
@@ -29,7 +30,12 @@ export default class Game {
 
   update() {
     this.renderBackground();
-    this.pipes.forEach((pipe) => pipe.update());
+
+    for (const pipe of this.pipes) {
+      CollisionDetector.checkCollision(pipe, this.bird);
+      pipe.update();
+    }
+
     this.bird.update();
     this.frameCount++;
 
