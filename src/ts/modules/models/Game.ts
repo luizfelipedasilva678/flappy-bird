@@ -15,6 +15,18 @@ export default class Game {
   private _isPlaying = false;
   private _gameOver = false;
 
+  setBestScore() {
+    const bestScore = localStorage.getItem("bestScore");
+
+    if (bestScore) {
+      if (this.score > parseInt(bestScore)) {
+        localStorage.setItem("bestScore", `${this.score}`);
+      }
+    } else {
+      localStorage.setItem("bestScore", `${this.score}`);
+    }
+  }
+
   constructor(
     ctx: CanvasRenderingContext2D,
     width: number,
@@ -67,6 +79,7 @@ export default class Game {
         if (CollisionDetector.checkCollision(pipe, this.bird)) {
           this.gameOver = true;
           this.isPlaying = false;
+          this.setBestScore();
           return;
         }
       }
@@ -75,6 +88,8 @@ export default class Game {
     this.bird.update();
     this.drawScore();
     this.frameCount++;
+
+    if (this.gameOver) this.drawBestScore();
 
     const offScreenPipe = this.pipes.find((pipe) => pipe.isOffScreen);
 
@@ -92,6 +107,16 @@ export default class Game {
           this.pipeGap
         ),
       ];
+    }
+  }
+
+  private drawBestScore() {
+    const bestScore = localStorage.getItem("bestScore");
+
+    if (bestScore) {
+      this.ctx.font = "bold 30px Arial";
+      this.ctx.fillStyle = "white";
+      this.ctx.fillText(`Best score: ${bestScore}`, 75, 100);
     }
   }
 
