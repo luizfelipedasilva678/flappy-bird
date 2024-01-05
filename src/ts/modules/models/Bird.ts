@@ -1,19 +1,30 @@
 import { MAX_TICK, UPFLAP, MIDFLAP } from "../../constants";
+import Game from "./Game";
 
 export default class Bird {
   private ctx: CanvasRenderingContext2D;
+  private sprites: HTMLImageElement[] = [];
+  private xPosition: number;
+  private yPosition: number;
+  private game: Game;
   private currentSprite = 0;
   private frameInterval = 5;
   private gravity = 0.5;
   private speed = 0;
   private birdJump = 11.5;
-  private xPosition = 20;
-  private yPosition = window.innerHeight / 2;
-  private sprites: HTMLImageElement[] = [];
 
-  constructor(ctx: CanvasRenderingContext2D, sprites: HTMLImageElement[] = []) {
+  constructor(
+    ctx: CanvasRenderingContext2D,
+    game: Game,
+    sprites: HTMLImageElement[] = [],
+    initialXPosition: number = 100,
+    initialYPosition: number = window.innerHeight / 2
+  ) {
     this.ctx = ctx;
+    this.xPosition = initialXPosition;
+    this.yPosition = initialYPosition;
     this.sprites = sprites;
+    this.game = game;
   }
 
   private draw() {
@@ -25,8 +36,11 @@ export default class Bird {
   }
 
   update() {
-    this.speed = this.speed + this.gravity;
-    this.yPosition = this.yPosition + this.speed;
+    if (this.game.isPlaying) {
+      this.speed = this.speed + this.gravity;
+      this.yPosition = this.yPosition + this.speed;
+    }
+
     this.updateSprite();
     this.draw();
   }

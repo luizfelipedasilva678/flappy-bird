@@ -11,6 +11,8 @@ import "../css/style.css";
 async function init() {
   const canvas = document.getElementById("game") as HTMLCanvasElement;
   const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+  const gameActions = document.getElementById("game-actions") as HTMLElement;
+  const restartButton = document.getElementById("restart") as HTMLButtonElement;
   canvas.width = 320;
   canvas.height = 480;
 
@@ -24,15 +26,26 @@ async function init() {
 
   const game = new Game(ctx, canvas.width, canvas.height, images);
 
+  function showRestartButton() {
+    if (game.gameOver) {
+      gameActions.style.display = "flex";
+    } else {
+      gameActions.style.display = "none";
+    }
+  }
+
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     game.update();
+    showRestartButton();
     window.requestAnimationFrame(animate);
   }
 
   animate();
 
-  addEvent("click", window, game.birdJump.bind(game));
+  addEvent("click", canvas, () => (game.isPlaying = true));
+  addEvent("click", canvas, () => game.birdJump());
+  addEvent("click", restartButton, () => game.restart());
 }
 
 init();

@@ -140,3 +140,27 @@ html {
   height: 100%;
   background: #242424;
 }
+
+.game-container {
+  position: relative;
+}
+
+.game-actions {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+#restart {
+  background: #fe9800;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 1rem;
+}

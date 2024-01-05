@@ -7,10 +7,13 @@ export default class Game {
   private width: number;
   private height: number;
   private frameCount = 0;
+  private score = 0;
   private pipes: Pipe[] = [];
   private pipeGap = 250;
   private bird: Bird;
   private ctx: CanvasRenderingContext2D;
+  private _isPlaying = false;
+  private _gameOver = false;
 
   constructor(
     ctx: CanvasRenderingContext2D,
@@ -22,12 +25,16 @@ export default class Game {
     this.width = width;
     this.height = height;
     this.sprites = sprites;
-    this.bird = new Bird(ctx, this.sprites.slice(0, 3));
-    this.pipes = Array.from(
+    this.bird = new Bird(ctx, this, this.sprites.slice(0, 3), 100, height / 2);
+    this.pipes = this.createPipes();
+  }
+
+  createPipes() {
+    return Array.from(
       { length: 2 },
       (_, i) =>
         new Pipe(
-          ctx,
+          this.ctx,
           this.sprites[4],
           this.width + this.pipeGap * i,
           this.height,
@@ -36,25 +43,45 @@ export default class Game {
     );
   }
 
+  restart() {
+    this.pipes = this.createPipes();
+    this.bird = new Bird(
+      this.ctx,
+      this,
+      this.sprites.slice(0, 3),
+      100,
+      this.height / 2
+    );
+    this.score = 0;
+    this.gameOver = false;
+    this.isPlaying = false;
+  }
+
   update() {
-    this.renderBackground();
+    this.drawBackground();
 
     for (const pipe of this.pipes) {
-      if (CollisionDetector.checkCollision(pipe, this.bird)) {
-        return;
-      }
+      if (this.isPlaying) {
+        pipe.update();
 
-      pipe.update();
+        if (CollisionDetector.checkCollision(pipe, this.bird)) {
+          this.gameOver = true;
+          this.isPlaying = false;
+          return;
+        }
+      }
     }
 
     this.bird.update();
+    this.drawScore();
     this.frameCount++;
 
     const offScreenPipe = this.pipes.find((pipe) => pipe.isOffScreen);
 
     if (offScreenPipe) {
-      const lastPipe = this.pipes[this.pipes.length - 1];
+      this.score++;
 
+      const lastPipe = this.pipes[this.pipes.length - 1];
       this.pipes = [
         ...this.pipes.slice(1),
         new Pipe(
@@ -68,11 +95,33 @@ export default class Game {
     }
   }
 
-  renderBackground() {
+  private drawScore() {
+    this.ctx.font = "bold 50px Arial";
+    this.ctx.fillStyle = "white";
+    this.ctx.fillText(`${this.score}`, this.width / 2, 50);
+  }
+
+  private drawBackground() {
     this.ctx.drawImage(this.sprites[3], 0, 0, this.width, this.height);
   }
 
   birdJump() {
     this.bird.jump();
+  }
+
+  get isPlaying() {
+    return this._isPlaying;
+  }
+
+  set isPlaying(value: boolean) {
+    this._isPlaying = value;
+  }
+
+  get gameOver() {
+    return this._gameOver;
+  }
+
+  set gameOver(value: boolean) {
+    this._gameOver = value;
   }
 }
