@@ -8,6 +8,7 @@ export default class Game {
   private height: number;
   private frameCount = 0;
   private pipes: Pipe[] = [];
+  private pipeGap = 250;
   private bird: Bird;
   private ctx: CanvasRenderingContext2D;
 
@@ -24,7 +25,14 @@ export default class Game {
     this.bird = new Bird(ctx, this.sprites.slice(0, 3));
     this.pipes = Array.from(
       { length: 2 },
-      (_, i) => new Pipe(ctx, this.sprites[4], i, this.width, this.height)
+      (_, i) =>
+        new Pipe(
+          ctx,
+          this.sprites[4],
+          this.width + this.pipeGap * i,
+          this.height,
+          this.pipeGap
+        )
     );
   }
 
@@ -32,24 +40,29 @@ export default class Game {
     this.renderBackground();
 
     for (const pipe of this.pipes) {
-      CollisionDetector.checkCollision(pipe, this.bird);
+      if (CollisionDetector.checkCollision(pipe, this.bird)) {
+        return;
+      }
+
       pipe.update();
     }
 
     this.bird.update();
     this.frameCount++;
 
-    const offScreenPipeIdx = this.pipes.findIndex((pipe) => pipe.isOffScreen);
+    const offScreenPipe = this.pipes.find((pipe) => pipe.isOffScreen);
 
-    if (offScreenPipeIdx !== -1) {
+    if (offScreenPipe) {
+      const lastPipe = this.pipes[this.pipes.length - 1];
+
       this.pipes = [
         ...this.pipes.slice(1),
         new Pipe(
           this.ctx,
           this.sprites[4],
-          offScreenPipeIdx,
-          this.width,
-          this.height
+          lastPipe.pipeXPosition + this.pipeGap,
+          this.height,
+          this.pipeGap
         ),
       ];
     }

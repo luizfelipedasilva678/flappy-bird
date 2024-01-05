@@ -3,24 +3,24 @@ import getRandomIntInclusive from "../utils/math/getRandomIntInclusive";
 export default class Pipe {
   private ctx: CanvasRenderingContext2D;
   private sprite: HTMLImageElement;
-  private dx: number;
+  private dx: number = 2;
+  private pipePosx: number;
   private downPipePosy: number;
   private upPipePosy: number;
-  private pipeGap = 200;
+  private pipeGap: number;
   private offScreen = false;
-  private _upPipeXPosition: number = 0;
-  private _upPipeYPosition: number = 0;
 
   constructor(
     ctx: CanvasRenderingContext2D,
     sprite: HTMLImageElement,
-    pipe: number,
-    gameWidth: number,
-    gameHeight: number
+    xPosition: number,
+    gameHeight: number,
+    pipeGap: number
   ) {
     this.ctx = ctx;
+    this.pipeGap = pipeGap;
     this.sprite = sprite;
-    this.dx = gameWidth + this.pipeGap * pipe;
+    this.pipePosx = xPosition;
     this.upPipePosy = getRandomIntInclusive(0, -gameHeight / 2);
     this.downPipePosy = this.upPipePosy + gameHeight / 2 + this.pipeGap;
   }
@@ -29,33 +29,27 @@ export default class Pipe {
     this.ctx.save();
     this.ctx.translate(this.sprite.width / 2, this.sprite.height / 2);
     this.ctx.rotate(Math.PI);
-    this._upPipeXPosition = -this.sprite.width / 2 - this.dx;
-    this._upPipeYPosition = -this.sprite.height / 2 - this.upPipePosy;
     this.ctx.drawImage(
       this.sprite,
-      this._upPipeXPosition,
-      this._upPipeYPosition
+      -this.sprite.width / 2 - this.pipePosx,
+      -this.sprite.height / 2 - this.upPipePosy
     );
     this.ctx.restore();
   }
 
   draw() {
     this.rotateAndPaintPipe();
-    this.ctx.drawImage(this.sprite, this.dx, this.downPipePosy);
+    this.ctx.drawImage(this.sprite, this.pipePosx, this.downPipePosy);
   }
 
   update() {
-    if (this.dx <= -this.sprite.width) {
+    if (this.pipePosx <= -this.sprite.width) {
       this.offScreen = true;
       return;
     }
 
-    this.dx -= 2;
+    this.pipePosx -= this.dx;
     this.draw();
-  }
-
-  set isOffScreen(value: boolean) {
-    this.offScreen = value;
   }
 
   get isOffScreen() {
@@ -70,16 +64,12 @@ export default class Pipe {
     return this.sprite.height;
   }
 
-  get upPipeXPosition() {
-    return this._upPipeXPosition;
+  get pipeXPosition() {
+    return this.pipePosx;
   }
 
   get upPipeYPosition() {
-    return this._upPipeYPosition;
-  }
-
-  get downPipeXPosition() {
-    return this.dx;
+    return this.upPipePosy;
   }
 
   get downPipeYPosition() {
