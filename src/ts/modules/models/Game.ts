@@ -76,7 +76,11 @@ export default class Game {
       if (this.isPlaying) {
         pipe.update();
 
-        if (CollisionDetector.checkCollision(pipe, this.bird)) {
+        if (
+          CollisionDetector.checkCollision(pipe, this.bird) ||
+          this.bird.birdYPosition <= 0 ||
+          this.bird.birdYPosition >= this.height
+        ) {
           this.gameOver = true;
           this.isPlaying = false;
           this.setBestScore();

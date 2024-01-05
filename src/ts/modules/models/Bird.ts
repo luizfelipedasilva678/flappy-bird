@@ -11,7 +11,7 @@ export default class Bird {
   private frameInterval = 5;
   private gravity = 0.5;
   private speed = 0;
-  private birdJump = 11.5;
+  private birdJump = 10;
 
   constructor(
     ctx: CanvasRenderingContext2D,
