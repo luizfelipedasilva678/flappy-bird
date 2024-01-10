@@ -15,6 +15,6 @@ export default class CollisionDetector {
       bird.birdYPosition + bird.birdHeight >= pipe.downPipeYPosition &&
       bird.birdYPosition <= pipe.downPipeYPosition + pipe.pipeHeight;
 
-    if (insideUpPipe || insideDownPipe) return true;
+    return insideUpPipe || insideDownPipe;
   }
 }
